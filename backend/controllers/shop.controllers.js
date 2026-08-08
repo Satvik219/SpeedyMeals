@@ -1,9 +1,11 @@
 import Shop from "../models/shop.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
+import { normalizeCity } from "../utils/cityAlias.js";
 
 export const createEditShop=async (req,res) => {
     try {
-       const {name,city,state,address}=req.body
+       const {name,state,address}=req.body
+       const city=normalizeCity(req.body.city)
        let image;
        if(req.file){
         console.log(req.file)
@@ -34,7 +36,7 @@ export const getMyShop=async (req,res) => {
             options:{sort:{updatedAt:-1}}
         })
         if(!shop){
-            return null
+            return res.status(200).json(null)
         }
         return res.status(200).json(shop)
     } catch (error) {
@@ -44,8 +46,7 @@ export const getMyShop=async (req,res) => {
 
 export const getShopByCity=async (req,res) => {
     try {
-        const {city}=req.params
-
+        const city=normalizeCity(req.params.city)
         const shops=await Shop.find({
             city:{$regex:new RegExp(`^${city}$`, "i")}
         }).populate('items')
