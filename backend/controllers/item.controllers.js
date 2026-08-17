@@ -1,6 +1,7 @@
 import Item from "../models/item.model.js";
 import Shop from "../models/shop.model.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
+import { normalizeCity } from "../utils/cityAlias.js";
 
 export const addItem = async (req, res) => {
     try {
@@ -92,7 +93,9 @@ export const deleteItem = async (req, res) => {
 
 export const getItemByCity = async (req, res) => {
     try {
-        const { city } = req.params
+        // Keep item lookup consistent with shop lookup: geocoders may return
+        // aliases such as "Bangalore" while shops are stored as "Bengaluru".
+        const city = normalizeCity(req.params.city)
         if (!city) {
             return res.status(400).json({ message: "city is required" })
         }

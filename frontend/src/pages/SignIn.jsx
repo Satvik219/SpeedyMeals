@@ -39,6 +39,9 @@ function SignIn() {
      }
      const handleGoogleAuth=async () => {
              const provider=new GoogleAuthProvider()
+             // Do not silently reuse Firebase's last Google session. This
+             // makes Google display the account picker on every sign-in.
+             provider.setCustomParameters({ prompt: 'select_account' })
              const result=await signInWithPopup(auth,provider)
        try {
          const {data}=await axios.post(`${serverUrl}/api/auth/google-auth`,{
